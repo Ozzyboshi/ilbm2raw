@@ -184,7 +184,7 @@ int main(int argc,char **argv)
 				if (VERBOSE) printf("Color map found\n");
 				read(h, ColorMap, l);
 				if (l%2) lseek(h, 1, SEEK_CUR);
-				ncol = l/3;    /* Numero colori = numero componenti/3 */
+				ncol = l/3;    
 				if (VERBOSE) printf("Number of colors : %d\n",ncol);
 
 				if (paletteFileName)
@@ -205,7 +205,20 @@ int main(int argc,char **argv)
 				for (cont=0;cont<l;cont+=3)
 				{
 				    if (VERBOSE) printf("Color index %d: %02x %02x %02x\n",cont/3,(UBYTE)ColorMap[cont],(UBYTE)ColorMap[cont+1],(UBYTE)ColorMap[cont+2]);
-					if (paletteFileName) write(out,&ColorMap[cont],3);
+				    UBYTE color1=(UBYTE)ColorMap[cont]&0xF0;
+				    UBYTE color2=(UBYTE)ColorMap[cont+1]&0xF0;
+				    UBYTE color3=(UBYTE)ColorMap[cont+2]&0xF0;
+				    UBYTE firstByte=color1>>4;
+				    UBYTE secondByte=color2|(color3>>4);
+				    UWORD finalValue=(UWORD)(firstByte<<8)|(UWORD)secondByte;
+				    UWORD finalValueSwapped=swap_uint16(finalValue);
+				    /*printf("Colore1: %02x\n",color1);
+				    printf("Colore2: %02x\n",color2);
+				    printf("Colore2: %02x\n",color3);
+				    printf("First byte %02x\n",firstByte);
+				    printf("Second byte %02x\n",secondByte);
+				    printf("final word %04x\n",finalValue);*/
+				    if (paletteFileName) write(out,&finalValueSwapped,2);
 				    //if (VERBOSE) print_bytes((UBYTE*)&ColorMap[cont],1);
 				}
 				if (paletteFileName) close(out);
