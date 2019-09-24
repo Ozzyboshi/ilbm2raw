@@ -57,3 +57,4 @@ REVISION
 /mpc*
 /gmp*
 /isl*
+src/ilbm2raw
