@@ -20,10 +20,10 @@ Typing ilbm2raw -h will display a little help screen that is quite self-explanat
 ```
   Usage: ilbm2raw inputIFFFile outputRAWFile [OPTIONS]
   OPTIONS:
-    -a		   : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)
-    -p outfile : Write resulting palette into outfile
-    -i 		   : Output in interleaved mode (raw mode default)
-    -v		   : Be verbose
+    -a		     : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)
+    -p outfile       : Write resulting palette into outfile
+    -i 		     : Output in interleaved mode (raw mode default)
+    -v		     : Be verbose
 
 ```
 
