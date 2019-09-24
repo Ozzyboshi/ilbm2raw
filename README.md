@@ -4,7 +4,8 @@ ilbm2raw is a simple tool to convert Amiga IFF image files to raw data needed fo
 
 ilbm2raw is based on code from Sebastiano Vigna from Italian Amiga Magazine issue 11 disk, his code has been enanched to support Byterun1 compression, non-interleaved output images and palette recording.
 
-###installation
+### installation
+
 In order to compile and install ilbm2raw you will need a regular gcc, the whole program has almost no dependencies and it should work on any modern Linux distro, just type the canonical
 ```
   ./configure
