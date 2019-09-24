@@ -1,6 +1,6 @@
 # ilbm2raw
 
-ilbm2raw is a simple tool to convert Amiga IFF image files to raw data needed for Amiga programming.  
+ilbm2raw is a simple tool to convert Amiga IFF image files to raw data needed for Amiga OCS/ECS programming.  
 
 ilbm2raw is based on code from Sebastiano Vigna from Italian Amiga Magazine issue 11 disk, his code has been enanched to support Byterun1 compression, non-interleaved output images and palette recording.
 
