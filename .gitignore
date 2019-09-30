@@ -15,6 +15,7 @@
 *.o
 *.pyc
 *.tmp
+*.tar.gz
 
 .deps
 .libs
