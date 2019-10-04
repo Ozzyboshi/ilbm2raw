@@ -16,7 +16,7 @@ In order to compile and install ilbm2raw you will need a regular gcc, the whole 
 
 and you are done.
 
-### usage
+### Usage
 
 Typing ilbm2raw -h will display a little help screen that is quite self-explanatory
 
