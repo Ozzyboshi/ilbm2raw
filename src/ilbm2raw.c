@@ -270,14 +270,17 @@ int main(int argc,char **argv)
 					
 					unsigned int bytesRead=0;
 					unsigned int bytesReadTotal=0;
-					for (UWORD planCounter=0;planCounter<BitMapHeader.nPlanes;planCounter++)
+					UWORD planCounter=0;					
+					for (planCounter=0;planCounter<BitMapHeader.nPlanes;planCounter++)
 					{
-						for (UWORD yCounter=0;yCounter<BitMapHeader.h;yCounter++)
+						UWORD yCounter=0;
+						for (yCounter=0;yCounter<BitMapHeader.h;yCounter++)
 						{
 							UBYTE* decompressedData=byterun1decompress((UBYTE*) p+bytesReadTotal,RowBytes(BitMapHeader.w),&bytesRead);
 							if (VERBOSE)
-							{							
-								for (int i=0;i<40;i++)
+							{
+								int i=0;							
+								for (i=0;i<40;i++)
 								{
 									printf("%hhx ",decompressedData[i]);							
 								}
