@@ -99,7 +99,7 @@ int main(int argc,char **argv)
 	char aceFileHeader[]="/tmp/ilbm2rawXXXXXX";
 
 	while((opt = getopt(argc, argv, ":hvp:ai")) != -1)  
-    {  
+    	{  
 		switch(opt)  
 		{
 			case 'a': 
@@ -119,13 +119,13 @@ int main(int argc,char **argv)
 		    default:
 			break;
 		}  
-    } 
+    	}
 	for(; optind < argc; optind++)
 	{
 		if (inputFile==NULL) inputFile=argv[optind];  
 		else if (outputFileName==NULL) outputFileName=argv[optind];
 		else printusage(argv[0]);
-    } 
+    	} 
 	if (VERBOSE) printf("Input file: %s\n",inputFile);
 	if (VERBOSE&&outputFileName) printf("Output file: %s\n",outputFileName);
 	if (VERBOSE&&paletteFileName) printf("Palette file: %s\n",paletteFileName);
