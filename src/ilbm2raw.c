@@ -99,8 +99,13 @@ int main(int argc,char **argv)
 	const char* outputFileName=NULL;
 	char aceFileHeader[]="/tmp/ilbm2rawXXXXXX";
 
+<<<<<<< HEAD
 	while((opt = getopt(argc, argv, ":hvp:aiV")) != -1)  
     {  
+=======
+	while((opt = getopt(argc, argv, ":hvp:ai")) != -1)  
+    	{  
+>>>>>>> 2893057b22ebb660db8c275e6920669c71cd3e4d
 		switch(opt)  
 		{
 			case 'a': 
@@ -122,13 +127,18 @@ int main(int argc,char **argv)
 		    default:
 			break;
 		}  
-    } 
+    	}
 	for(; optind < argc; optind++)
 	{
 		if (inputFile==NULL) inputFile=argv[optind];  
 		else if (outputFileName==NULL) outputFileName=argv[optind];
+<<<<<<< HEAD
 		else printusage();
     } 
+=======
+		else printusage(argv[0]);
+    	} 
+>>>>>>> 2893057b22ebb660db8c275e6920669c71cd3e4d
 	if (VERBOSE) printf("Input file: %s\n",inputFile);
 	if (VERBOSE&&outputFileName) printf("Output file: %s\n",outputFileName);
 	if (VERBOSE&&paletteFileName) printf("Palette file: %s\n",paletteFileName);
