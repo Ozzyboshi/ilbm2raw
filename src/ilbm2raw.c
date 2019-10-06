@@ -65,7 +65,8 @@ ULONG swap_uint32( ULONG );
 
 
 BMapHeader BitMapHeader;
-void printusage(const char*);
+void printusage();
+void printversion();
 void print_bytes(void *ptr, int size) ;
 
 #define UGetByte()      (*source++)
@@ -98,7 +99,7 @@ int main(int argc,char **argv)
 	const char* outputFileName=NULL;
 	char aceFileHeader[]="/tmp/ilbm2rawXXXXXX";
 
-	while((opt = getopt(argc, argv, ":hvp:ai")) != -1)  
+	while((opt = getopt(argc, argv, ":hvp:aiV")) != -1)  
     {  
 		switch(opt)  
 		{
@@ -109,13 +110,15 @@ int main(int argc,char **argv)
 				INTERLEAVED=1;
 				break;
 		    case 'h':  
-				printusage(argv[0]);
+				printusage();
 		    case 'v':
 				VERBOSE=1;
 			break;
 		    case 'p':  
 		        paletteFileName=optarg;
-		        break;  
+		        break;
+		    case 'V':
+		    	printversion(); 
 		    default:
 			break;
 		}  
@@ -124,7 +127,7 @@ int main(int argc,char **argv)
 	{
 		if (inputFile==NULL) inputFile=argv[optind];  
 		else if (outputFileName==NULL) outputFileName=argv[optind];
-		else printusage(argv[0]);
+		else printusage();
     } 
 	if (VERBOSE) printf("Input file: %s\n",inputFile);
 	if (VERBOSE&&outputFileName) printf("Output file: %s\n",outputFileName);
@@ -132,6 +135,8 @@ int main(int argc,char **argv)
 	if (VERBOSE&&ACE) printf("Ace mode enabled\n");
 	if (VERBOSE&&INTERLEAVED) printf("Interleaved mode enabled\n");
 	
+	if (inputFile==NULL || !strlen(inputFile)) printusage();
+
 	h = open(inputFile, O_RDONLY);
 	if (h < 0) 
 	{
@@ -555,13 +560,19 @@ void convertToNonInterleaved(const char* fileName,const char* aceFileHeader)
 	}
 }
 
-void printusage(const char* prgName)
+void printusage()
 {
-	printf("Usage: %s inputIFFFile outputRAWFile [OPTIONS]\n",prgName);
+	printf("Usage: %s inputIFFFile outputRAWFile [OPTIONS]\n",PACKAGE);
 	printf("OPTIONS:\n");
 	printf("	-a		   : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)\n");
-	printf("	-p outfile : Write resulting palette into outfile\n");
+	printf("	-p outfile 	   : Write resulting palette into outfile\n");
 	printf("	-i 		   : Output in interleaved mode (raw mode default)\n");
 	printf("	-v		   : Be verbose\n");
+	printf("	-V		   : Print version info\n");
 	exit(1);
+}
+void printversion()
+{
+	printf("%s version '%s'\n",PACKAGE,VERSION);
+	exit(0);
 }
