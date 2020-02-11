@@ -99,7 +99,7 @@ int main(int argc,char **argv)
 	const char* outputFileName=NULL;
 	char aceFileHeader[]="/tmp/ilbm2rawXXXXXX";
 
-	while((opt = getopt(argc, argv, ":hvp:ai")) != -1)  
+	while((opt = getopt(argc, argv, ":hvp:aiV")) != -1)  
     	{  
 		switch(opt)  
 		{

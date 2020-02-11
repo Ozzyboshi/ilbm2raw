@@ -374,7 +374,7 @@ CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPPFLAGS = 
 CYGPATH_W = echo
-DEFS = -DPACKAGE_NAME=\"ilbm2raw\" -DPACKAGE_TARNAME=\"ilbm2raw\" -DPACKAGE_VERSION=\"0.1\" -DPACKAGE_STRING=\"ilbm2raw\ 0.1\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"ilbm2raw\" -DVERSION=\"0.1\"
+DEFS = -DPACKAGE_NAME=\"ilbm2raw\" -DPACKAGE_TARNAME=\"ilbm2raw\" -DPACKAGE_VERSION=\"0.2\" -DPACKAGE_STRING=\"ilbm2raw\ 0.2\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DPACKAGE=\"ilbm2raw\" -DVERSION=\"0.2\"
 DEPDIR = .deps
 ECHO_C = 
 ECHO_N = -n
@@ -395,15 +395,15 @@ OBJEXT = o
 PACKAGE = ilbm2raw
 PACKAGE_BUGREPORT = 
 PACKAGE_NAME = ilbm2raw
-PACKAGE_STRING = ilbm2raw 0.1
+PACKAGE_STRING = ilbm2raw 0.2
 PACKAGE_TARNAME = ilbm2raw
 PACKAGE_URL = 
-PACKAGE_VERSION = 0.1
+PACKAGE_VERSION = 0.2
 PATH_SEPARATOR = :
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 0.1
+VERSION = 0.2
 abs_builddir = /home/agarzi/github/ilbm2raw/src
 abs_srcdir = /home/agarzi/github/ilbm2raw/src
 abs_top_builddir = /home/agarzi/github/ilbm2raw
