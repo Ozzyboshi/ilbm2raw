@@ -197,7 +197,7 @@ int main(int argc,char **argv)
 					out = open(paletteFileName, O_CREAT|O_WRONLY| O_EXCL,S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 					if (out<0) 
 					{
-						perror("Cant write output file");
+						perror("Cant write palette output file");
 						exit(1);
 					}
 					else if (VERBOSE) printf("palette file '%s' created\n",paletteFileName);
@@ -224,7 +224,7 @@ int main(int argc,char **argv)
 				    printf("Second byte %02x\n",secondByte);
 				    printf("final word %04x\n",finalValue);*/
 				    if (paletteFileName) write(out,&finalValueSwapped,2);
-				    //if (VERBOSE) print_bytes((UBYTE*)&ColorMap[cont],1);
+				    // if (VERBOSE) print_bytes((UBYTE*)&ColorMap[cont],1);
 				}
 				if (paletteFileName) close(out);
 				break;
@@ -248,7 +248,7 @@ int main(int argc,char **argv)
 						int out2=mkstemp(aceFileHeader);
 						if (out<0) 
 						{
-							perror("Cant write output file");
+							perror("Cant write ace output file");
 							exit(1);
 						}
 						else if (VERBOSE) printf("Created ace header file %s\n",aceFileHeader);
@@ -315,7 +315,7 @@ int main(int argc,char **argv)
 						int out2=mkstemp(aceFileHeader);
 						if (out<0) 
 						{
-							perror("Cant write output file");
+							perror("Cant write ace header output file");
 							exit(1);
 						}
 						else if (VERBOSE) printf("Created ace header file %s\n",aceFileHeader);
@@ -335,7 +335,7 @@ int main(int argc,char **argv)
 					out = open(outputFileName, O_CREAT|O_WRONLY|O_EXCL,S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 					if (out<0) 
 					{
-						perror("Cant write output file");
+						perror("Cant write to output file");
 						exit(1);
 					}
 					write(out, p, l);
@@ -345,7 +345,7 @@ int main(int argc,char **argv)
 					{
 						for (byteCounter=0,yCont=0;yCont<=BitMapHeader.h;yCont++)
 						{
-							for (zCont=0;zCont<=BitMapHeader.nPlanes;zCont++)
+							for (zCont=0;zCont<BitMapHeader.nPlanes;zCont++)
 							{
 								snprintf(cmd,sizeof(cmd),"dd  if=%s of=%s.%d bs=%d count=1 skip=%d oflag=append conv=notrunc",outputFileName,outputFileName,zCont,BitMapHeader.w/8,byteCounter);
 								if (!VERBOSE) strcat(cmd," 2>/dev/null");
