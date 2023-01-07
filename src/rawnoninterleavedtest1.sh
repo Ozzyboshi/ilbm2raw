@@ -1,0 +1,1 @@
+mkdir rawnoninterleavedtest1 && ./ilbm2raw ../imgtest/flowers320x256x8.iff ./rawnoninterleavedtest1/flowers320x256x8.raw -p ./rawnoninterleavedtest1/flowers320x256x8.plt && diff ./rawnoninterleavedtest1/flowers320x256x8.raw ../imgout/flowers320x256x8.raw && diff ./rawnoninterleavedtest1/flowers320x256x8.plt ../imgout/flowers320x256x8.plt && rm -rf ./rawnoninterleavedtest1

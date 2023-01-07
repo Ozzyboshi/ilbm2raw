@@ -1,0 +1,1 @@
+mkdir acenoninterleavedtestout && ./ilbm2raw ../imgtest/rectintro.iff ./acenoninterleavedtestout/rectintro.bm -a -p ./acenoninterleavedtestout/rectintro.plt && diff ./acenoninterleavedtestout/rectintro.bm ../imgout/rectintro.bm && diff ./acenoninterleavedtestout/rectintro.plt ../imgout/rectintro.plt && rm -rf ./acenoninterleavedtestout

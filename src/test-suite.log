@@ -1,0 +1,142 @@
+======================================
+   ilbm2raw 0.2: src/test-suite.log
+======================================
+
+# TOTAL: 5
+# PASS:  4
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  1
+# XPASS: 0
+# ERROR: 0
+
+.. contents:: :depth: 2
+
+FAIL: rawinterleavedonelineswaptest.sh
+======================================
+
+Requested swap for color 0 with 1
+color1 0/0
+color2 f/ff
+outputFileName:./rawinterleavedonelineswaptest/simpleinterleaved.raw
+Processing byte 0
+Processing pixel 0
+vale aa
+risultato 80
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<aa>> 1
+ciao 0 2a
+Processing pixel 1
+vale 2a
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<2a>> 1
+ciao 1 6a
+Processing pixel 2
+vale 6a
+risultato 20
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<6a>> 1
+ciao 0 4a
+Processing pixel 3
+vale 4a
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<4a>> 1
+ciao 1 5a
+Processing pixel 4
+vale 5a
+risultato 8
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<5a>> 1
+ciao 0 52
+Processing pixel 5
+vale 52
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<52>> 1
+ciao 1 56
+Processing pixel 6
+vale 56
+risultato 2
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<56>> 1
+ciao 0 54
+Processing pixel 7
+vale 54
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<54>> 1
+ciao 1 55
+Processing byte 1
+Processing pixel 0
+vale 54
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<54>> 1
+ciao 1 d4
+Processing pixel 1
+vale d4
+risultato 40
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<d4>> 1
+ciao 0 94
+Processing pixel 2
+vale 94
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<94>> 1
+ciao 1 b4
+Processing pixel 3
+vale b4
+risultato 10
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<b4>> 1
+ciao 0 a4
+Processing pixel 4
+vale a4
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<a4>> 1
+ciao 1 ac
+Processing pixel 5
+vale ac
+risultato 4
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<ac>> 1
+ciao 0 a8
+Processing pixel 6
+vale a8
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<a8>> 1
+ciao 1 aa
+Processing pixel 7
+vale aa
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<aa>> 1
+ciao 1 ab
+1c1
+< U«
+\ Manca newline alla fine del file
+---
+> U
+\ Manca newline alla fine del file
+

@@ -78,6 +78,7 @@ int unpackrow(UBYTE **pSource, UBYTE **pDest, UWORD srcBytes0, UWORD dstBytes0);
 UBYTE *byterun1decompress(UBYTE *c, unsigned int, unsigned int *);
 void convertToNonInterleaved(const char *, const char *);
 void swapPaletteColors(const char *, BMapHeader, int *, int *, int);
+void swapPaletteFile(const char *, int *, int *, int);
 unsigned char checkSwap(unsigned char, int *, int *, int);
 int ipow(int, int);
 unsigned char getMask(int);
@@ -138,10 +139,11 @@ int main(int argc, char **argv)
 				reti = regexec(&regex, optarg, 3, matches, 0);
 				if (!reti)
 				{
-					puts("Match");
+					memset(cmd, 0, sizeof(cmd));
 					memcpy(cmd, optarg + matches[1].rm_so, matches[1].rm_eo - matches[1].rm_so);
 					printf("Requested swap for color %s with ", cmd);
 					swapPaletteX[swapPaletteCounter] = atoi(cmd);
+					memset(cmd, 0, sizeof(cmd));
 					memcpy(cmd, optarg + matches[2].rm_so, matches[2].rm_eo - matches[2].rm_so);
 					printf("%s\n", cmd);
 					swapPaletteY[swapPaletteCounter] = atoi(cmd);
@@ -197,7 +199,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	read(h, (void *)&t, 4);
+	(void)read(h, (void *)&t, 4);
 	// if little endian
 	t = swap_uint32(t);
 
@@ -251,7 +253,7 @@ int main(int argc, char **argv)
 				lseek(h, 1, SEEK_CUR);
 			ncol = l / 3;
 			if (VERBOSE)
-				printf("Number of colors : %d\n", ncol);
+				printf("Number of colors : %ld\n", ncol);
 
 			if (paletteFileName)
 			{
@@ -272,7 +274,7 @@ int main(int argc, char **argv)
 			for (cont = 0; cont < l; cont += 3)
 			{
 				if (VERBOSE)
-					printf("Color index %d: %02x %02x %02x\n", cont / 3, (UBYTE)ColorMap[cont], (UBYTE)ColorMap[cont + 1], (UBYTE)ColorMap[cont + 2]);
+					printf("Color index %ld: %02x %02x %02x\n", cont / 3, (UBYTE)ColorMap[cont], (UBYTE)ColorMap[cont + 1], (UBYTE)ColorMap[cont + 2]);
 				UBYTE color1 = (UBYTE)ColorMap[cont] & 0xF0;
 				UBYTE color2 = (UBYTE)ColorMap[cont + 1] & 0xF0;
 				UBYTE color3 = (UBYTE)ColorMap[cont + 2] & 0xF0;
@@ -291,7 +293,13 @@ int main(int argc, char **argv)
 				// if (VERBOSE) print_bytes((UBYTE*)&ColorMap[cont],1);
 			}
 			if (paletteFileName)
+			{
 				close(out);
+				if (swapPaletteCounter)
+				{
+					swapPaletteFile(paletteFileName, swapPaletteX, swapPaletteY, swapPaletteCounter);
+				}
+			}
 			break;
 		case ID_CAMG:
 			read(h, (void *)&ComAmg, 4);
@@ -368,9 +376,17 @@ int main(int argc, char **argv)
 				}
 				close(out);
 				if (INTERLEAVED == 0)
+				{
 					convertToNonInterleaved(outputFileName, aceFileHeader);
+
+					// Swap colors if requested from the user
+					if (swapPaletteCounter)
+					{
+						swapPaletteColors(outputFileName, BitMapHeader, swapPaletteX, swapPaletteY, swapPaletteCounter);
+					}
+				}
 			}
-			// START OF cmpByteRun1 decompression
+			// END OF cmpByteRun1 decompression
 
 			// START OF case with no compression
 			else if (!BitMapHeader.compression)
@@ -414,15 +430,15 @@ int main(int argc, char **argv)
 
 				if (INTERLEAVED == 0)
 				{
-					for (byteCounter = 0, yCont = 0; yCont <= BitMapHeader.h; yCont++)
+					for (byteCounter = 0, yCont = 0; yCont < BitMapHeader.h; yCont++)
 					{
 						for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 						{
-							snprintf(cmd, sizeof(cmd), "dd  if=%s of=%s.%d bs=%d count=1 skip=%d oflag=append conv=notrunc", outputFileName, outputFileName, zCont, BitMapHeader.w / 8, byteCounter);
-							// if (!VERBOSE)
-							strcat(cmd, " 2>/dev/null");
-							// if (VERBOSE)
-							//	printf("%s\n", cmd);
+							snprintf(cmd, sizeof(cmd), "dd  if=%s of=%s.%d bs=%d count=1 skip=%ld oflag=append conv=notrunc", outputFileName, outputFileName, zCont, BitMapHeader.w / 8, byteCounter);
+							if (!VERBOSE)
+								strcat(cmd, " 2>/dev/null");
+							if (VERBOSE)
+								printf("%s\n", cmd);
 							system(cmd);
 							byteCounter++;
 						}
@@ -605,7 +621,7 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	{
 		for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 		{
-			snprintf(cmd, sizeof(cmd), "dd  if=%s of=%s.%d bs=%d count=1 skip=%d oflag=append conv=notrunc", fileName, fileName, zCont, BitMapHeader.w / 8, byteCounter);
+			snprintf(cmd, sizeof(cmd), "dd  if=%s of=%s.%d bs=%d count=1 skip=%ld oflag=append conv=notrunc", fileName, fileName, zCont, BitMapHeader.w / 8, byteCounter);
 			if (!VERBOSE)
 				strcat(cmd, " 2>/tmp/null");
 			if (VERBOSE)
@@ -672,16 +688,18 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 		exit(1);
 	}
 
+	int bytesPerLine = !(BitMapHeader.w % 8) ? BitMapHeader.w / 8 : 1 + BitMapHeader.w / 8;
+
 	// For each line
 	for (contLine = 0; contLine < BitMapHeader.h; contLine++)
 	{
 		// For each width byte
-		for (contByte = 0; contByte < BitMapHeader.w / 8; contByte++)
+		for (contByte = 0; contByte < bytesPerLine; contByte++)
 		{
 			printf("Processing byte %d\n", contByte);
 
 			// For each pixel of the byte
-			for (contPixel = 0; contPixel < 7; contPixel++)
+			for (contPixel = 0; contPixel < 8; contPixel++)
 			{
 				printf("Processing pixel %d\n", contPixel);
 
@@ -689,7 +707,7 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 				// read data from bitplanes
 				for (contBitplanes = 0; contBitplanes < BitMapHeader.nPlanes; contBitplanes++)
 				{
-					if (fseek(fd, (contByte * contLine) + (contBitplanes * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
+					if (fseek(fd, (bytesPerLine * contLine) + contByte + (contBitplanes * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
 					{
 						perror("Error seeking data\n");
 						exit(1);
@@ -734,32 +752,32 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 
 				// check if BYE has to be swapped
 				NEWBYTE = checkSwap(BYTE, swapPaletteX, swapPaletteY, swapPaletteCounter);
-				if (NEWBYTE!=BYTE)
+				if (NEWBYTE != BYTE)
 				{
-					printf("Byte has to be swapped with %x\n",NEWBYTE);
+					printf("Byte has to be swapped with %x\n", NEWBYTE);
 					for (contBitplanes2 = 0; contBitplanes2 < BitMapHeader.nPlanes; contBitplanes2++)
 					{
-						if (fseek(fd, (contByte * contLine) + (contBitplanes2 * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
+						if (fseek(fd, (bytesPerLine * contLine) + contByte + (contBitplanes2 * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
 						{
 							perror("Error seeking data\n");
 							exit(1);
 						}
 						fread(&ptr, 1, 1, fd);
-						printf("vale %x %x\n", ptr,getMask(contBitplanes2));
+						printf("Replacing byte <<%x>> %x\n", ptr, getMask(contBitplanes2));
 
-						if (NEWBYTE&getMask(contBitplanes2))
+						if (NEWBYTE & getMask(contBitplanes2))
 						{
 							newval = ptr;
-							newval |= 1 << 7-contByte;
-							printf("ciao 1 %x\n",newval);
+							newval |= 1 << 7 - contPixel;
+							printf("ciao 1 %x\n", newval);
 						}
 						else
 						{
 							newval = ptr;
-							newval &= ~(1 << 7-contByte);
-							printf("ciao 0 %x\n",newval);
+							newval &= ~(1 << 7 - contPixel);
+							printf("ciao 0 %x\n", newval);
 						}
-						if (fseek(fd, (contByte * contLine) + (contBitplanes2 * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
+						if (fseek(fd, (bytesPerLine * contLine) + contByte + (contBitplanes2 * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
 						{
 							perror("Error seeking data\n");
 							exit(1);
@@ -770,12 +788,6 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 						}
 					}
 				}
-
-				/*if (contPixel==1)
-				{
-				fclose(fd);
-				exit(0);
-				}*/
 			}
 		}
 
@@ -795,7 +807,10 @@ unsigned char checkSwap(unsigned char BYTE, int *swapPaletteX, int *swapPaletteY
 	int i = 0;
 	for (i = 0; i < swapPaletteCounter; i++)
 	{
-		if ((int)BYTE == swapPaletteX[i]) return swapPaletteY[i];
+		if ((int)BYTE == swapPaletteX[i])
+			return swapPaletteY[i];
+		if ((int)BYTE == swapPaletteY[i])
+			return swapPaletteX[i];
 	}
 	return BYTE;
 }
@@ -804,32 +819,32 @@ unsigned char getMask(int contPixel)
 {
 	unsigned char mask;
 	switch (contPixel)
-					{
-					case 7:
-						mask = 0x80;
-						break;
-					case 6:
-						mask = 0x40;
-						break;
-					case 5:
-						mask = 0x20;
-						break;
-					case 4:
-						mask = 0x10;
-						break;
-					case 3:
-						mask = 0x08;
-						break;
-					case 2:
-						mask = 0x04;
-						break;
-					case 1:
-						mask = 0x02;
-						break;
-					case 0:
-						mask = 0x01;
-						break;
-					}
+	{
+	case 7:
+		mask = 0x80;
+		break;
+	case 6:
+		mask = 0x40;
+		break;
+	case 5:
+		mask = 0x20;
+		break;
+	case 4:
+		mask = 0x10;
+		break;
+	case 3:
+		mask = 0x08;
+		break;
+	case 2:
+		mask = 0x04;
+		break;
+	case 1:
+		mask = 0x02;
+		break;
+	case 0:
+		mask = 0x01;
+		break;
+	}
 	return mask;
 }
 
@@ -847,6 +862,79 @@ int ipow(int base, int exp)
 	}
 
 	return result;
+}
+
+void swapPaletteFile(const char *paletteFileName, int *swapPaletteX, int *swapPaletteY, int swapPaletteCounter)
+{
+	int i = 0;
+	FILE *fd;
+	unsigned char color1[2];
+	unsigned char color2[2];
+	unsigned char ptr[2];
+	fd = fopen(paletteFileName, "rb+");
+	if (!fd)
+	{
+		perror("Unable to open palette output file");
+		exit(1);
+	}
+	for (i = 0; i < swapPaletteCounter; i++)
+	{
+		if (fseek(fd, swapPaletteX[i] * 2, SEEK_SET))
+		{
+			perror("Error seeking data\n");
+			exit(1);
+		}
+		if (!fread(color1, 2, 1, fd))
+		{
+			fprintf(stderr, "Error getting color1 value\n");
+			exit(1);
+		}
+		printf("color1 %x/%x\n", (unsigned int)color1[0], (unsigned int)color1[1]);
+
+		if (fseek(fd, swapPaletteY[i] * 2, SEEK_SET))
+		{
+			perror("Error seeking data\n");
+			exit(1);
+		}
+		if (!fread(color2, 2, 1, fd))
+		{
+			fprintf(stderr, "Error getting color2 value\n");
+			exit(1);
+		}
+		printf("color2 %x/%x\n", color2[0], color2[1]);
+
+		if (fseek(fd, swapPaletteX[i] * 2, SEEK_SET))
+		{
+			perror("Error seeking data\n");
+			exit(1);
+		}
+		if (!fwrite(color2, 2, 1, fd))
+		{
+			perror("Error writing color 2 swap (are you giving me a wrong color index?)");
+		}
+		else
+		{
+			if (VERBOSE)
+				printf("Value  %x/%x written at offset %d\n", color2[0], color2[1], swapPaletteX[i] * 2);
+		}
+
+		if (fseek(fd, swapPaletteY[i] * 2, SEEK_SET))
+		{
+			perror("Error seeking data\n");
+			exit(1);
+		}
+		if (!fwrite(color1, 2, 1, fd))
+		{
+			perror("Error writing color 1 swap (are you giving me a wrong color index?)");
+		}
+		else
+		{
+			if (VERBOSE)
+				printf("Value  %x/%x written at offset %d\n", color1[0], color1[1], swapPaletteY[i] * 2);
+		}
+	}
+	fclose(fd);
+	return;
 }
 
 void printusage()
