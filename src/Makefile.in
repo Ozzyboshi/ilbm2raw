@@ -454,9 +454,9 @@ ilbm2raw_SOURCES = ilbm2raw.c
 AM_CFLAGS = -Wno-unused-result
 
 # Unit testing
-check_SCRIPTS = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh
+check_SCRIPTS = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh
 TESTS = $(check_SCRIPTS)
-CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh
+CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh
 all: all-am
 
 .SUFFIXES:
@@ -793,6 +793,13 @@ rawinterleavedonelineswaptest.sh.log: rawinterleavedonelineswaptest.sh
 	--log-file $$b.log --trs-file $$b.trs \
 	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
 	"$$tst" $(AM_TESTS_FD_REDIRECT)
+stripestest.sh.log: stripestest.sh
+	@p='stripestest.sh'; \
+	b='stripestest.sh'; \
+	$(am__check_pre) $(LOG_DRIVER) --test-name "$$f" \
+	--log-file $$b.log --trs-file $$b.trs \
+	$(am__common_driver_flags) $(AM_LOG_DRIVER_FLAGS) $(LOG_DRIVER_FLAGS) -- $(LOG_COMPILE) \
+	"$$tst" $(AM_TESTS_FD_REDIRECT)
 .test.log:
 	@p='$<'; \
 	$(am__set_b); \
@@ -991,6 +998,10 @@ rawnoninterleavedtest2.sh:
 rawinterleavedonelineswaptest.sh:
 	echo 'rm -rf rawinterleavedonelineswaptest && mkdir rawinterleavedonelineswaptest && ./ilbm2raw -s 0,1 ../imgtest/simpleinterleaved.iff ./rawinterleavedonelineswaptest/simpleinterleaved.raw -p ./rawinterleavedonelineswaptest/simpleinterleaved.plt && diff ./rawinterleavedonelineswaptest/simpleinterleaved.raw ../imgout/simpleinterleaved.raw && diff ./rawinterleavedonelineswaptest/simpleinterleaved.plt ../imgout/simpleinterleaved.plt && rm -rf ./rawinterleavedonelineswaptest' > rawinterleavedonelineswaptest.sh
 	chmod +x rawinterleavedonelineswaptest.sh
+
+stripestest.sh:
+	echo 'rm -rf stripestest && mkdir stripestest && ./ilbm2raw ../imgtest/stripes.iff ./stripestest/stripes.raw && diff ./stripestest/stripes.raw ../imgout/stripes.raw && rm -rf ./stripestest' > stripestest.sh
+	chmod +x stripestest.sh
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
