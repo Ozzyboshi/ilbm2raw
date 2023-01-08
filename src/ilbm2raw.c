@@ -685,7 +685,7 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 	unsigned char mask;
 	unsigned char newval;
 
-	printf("outputFileName:%s\n", outputFileName);
+	//printf("outputFileName:%s\n", outputFileName);
 	fd = fopen(outputFileName, "rb+");
 	if (!fd)
 	{
@@ -701,12 +701,12 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 		// For each width byte
 		for (contByte = 0; contByte < bytesPerLine; contByte++)
 		{
-			printf("Processing byte %d\n", contByte);
+			//printf("Processing byte %d\n", contByte);
 
 			// For each pixel of the byte
 			for (contPixel = 0; contPixel < 8; contPixel++)
 			{
-				printf("Processing pixel %d\n", contPixel);
+				//printf("Processing pixel %d\n", contPixel);
 
 				BYTE = 0;
 				// read data from bitplanes
@@ -718,7 +718,7 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 						exit(1);
 					}
 					fread(&ptr, 1, 1, fd);
-					printf("vale %x\n", ptr);
+					//printf("vale %x\n", ptr);
 
 					switch (contPixel)
 					{
@@ -747,19 +747,19 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 						mask = 0x01;
 						break;
 					}
-					printf("risultato %x\n", ptr & mask);
+					//printf("risultato %x\n", ptr & mask);
 					if (ptr & mask)
 					{
 						BYTE += ipow(2, contBitplanes);
 					}
 				}
-				printf("BYte vale %d\n", BYTE);
+				//printf("BYte vale %d\n", BYTE);
 
 				// check if BYE has to be swapped
 				NEWBYTE = checkSwap(BYTE, swapPaletteX, swapPaletteY, swapPaletteCounter);
 				if (NEWBYTE != BYTE)
 				{
-					printf("Byte has to be swapped with %x\n", NEWBYTE);
+					//printf("Byte has to be swapped with %x\n", NEWBYTE);
 					for (contBitplanes2 = 0; contBitplanes2 < BitMapHeader.nPlanes; contBitplanes2++)
 					{
 						if (fseek(fd, (bytesPerLine * contLine) + contByte + (contBitplanes2 * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
@@ -768,19 +768,19 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 							exit(1);
 						}
 						fread(&ptr, 1, 1, fd);
-						printf("Replacing byte <<%x>> %x\n", ptr, getMask(contBitplanes2));
+						//printf("Replacing byte <<%x>> %x\n", ptr, getMask(contBitplanes2));
 
 						if (NEWBYTE & getMask(contBitplanes2))
 						{
 							newval = ptr;
 							newval |= 1 << 7 - contPixel;
-							printf("ciao 1 %x\n", newval);
+							//printf("ciao 1 %x\n", newval);
 						}
 						else
 						{
 							newval = ptr;
 							newval &= ~(1 << 7 - contPixel);
-							printf("ciao 0 %x\n", newval);
+							//printf("ciao 0 %x\n", newval);
 						}
 						if (fseek(fd, (bytesPerLine * contLine) + contByte + (contBitplanes2 * BitMapHeader.w / 8 * BitMapHeader.h), SEEK_SET))
 						{
@@ -795,14 +795,6 @@ void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int 
 				}
 			}
 		}
-
-		/*for (i = 0; i < swapPaletteCounter; i++)
-		{
-			printf("alessio %d\n", swapPaletteX[0]);
-			printf("alessio %d\n", swapPaletteY[0]);
-			fclose(fd);
-			exit(0);
-		}*/
 	}
 	return;
 }
