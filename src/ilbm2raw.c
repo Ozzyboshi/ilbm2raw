@@ -210,7 +210,7 @@ int main(int argc, char **argv)
 	else if (VERBOSE)
 		printf("Form tag found\n");
 
-	/* Total lenght, not interesting */
+	/* Total length, not interesting */
 	lseek(h, 4, SEEK_CUR);
 	read(h, (void *)&t, 4);
 
@@ -305,6 +305,11 @@ int main(int argc, char **argv)
 			read(h, (void *)&ComAmg, 4);
 			break;
 		case ID_BODY:
+			if (BitMapHeader.w/8*2*BitMapHeader.h*BitMapHeader.nPlanes == l && ((BitMapHeader.w%8) == 0))
+			{
+				BitMapHeader.w*=2;
+				printf("Warning!!! Header double size of declared resolution, doubling width!!! New width is %dpx\n",BitMapHeader.w);
+			}
 			p = (void *)calloc(l, 1);
 			read(h, p, l);
 			if (VERBOSE)
@@ -430,11 +435,11 @@ int main(int argc, char **argv)
 
 				if (INTERLEAVED == 0)
 				{
-					for (byteCounter = 0, yCont = 0; yCont < BitMapHeader.h; yCont++)
+					for (byteCounter = 0, yCont = 0; yCont <= BitMapHeader.h; yCont++)
 					{
 						for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 						{
-							snprintf(cmd, sizeof(cmd), "dd  if=%s of=%s.%d bs=%d count=1 skip=%ld oflag=append conv=notrunc", outputFileName, outputFileName, zCont, BitMapHeader.w / 8, byteCounter);
+							snprintf(cmd, sizeof(cmd), "dd if=%s of=%s.%d bs=%d count=1 skip=%ld oflag=append conv=notrunc", outputFileName, outputFileName, zCont, BitMapHeader.w / 8, byteCounter);
 							if (!VERBOSE)
 								strcat(cmd, " 2>/dev/null");
 							if (VERBOSE)

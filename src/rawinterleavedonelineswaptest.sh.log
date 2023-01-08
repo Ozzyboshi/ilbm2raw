@@ -61,64 +61,58 @@ Replacing byte <<54>> 1
 ciao 1 55
 Processing byte 1
 Processing pixel 0
-vale 54
-risultato 0
-BYte vale 0
-Byte has to be swapped with 1
-Replacing byte <<54>> 1
-ciao 1 d4
+vale 80
+risultato 80
+BYte vale 1
+Byte has to be swapped with 0
+Replacing byte <<80>> 1
+ciao 0 0
 Processing pixel 1
-vale d4
-risultato 40
-BYte vale 1
-Byte has to be swapped with 0
-Replacing byte <<d4>> 1
-ciao 0 94
+vale 0
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<0>> 1
+ciao 1 40
 Processing pixel 2
-vale 94
+vale 40
 risultato 0
 BYte vale 0
 Byte has to be swapped with 1
-Replacing byte <<94>> 1
-ciao 1 b4
+Replacing byte <<40>> 1
+ciao 1 60
 Processing pixel 3
-vale b4
-risultato 10
-BYte vale 1
-Byte has to be swapped with 0
-Replacing byte <<b4>> 1
-ciao 0 a4
+vale 60
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<60>> 1
+ciao 1 70
 Processing pixel 4
-vale a4
+vale 70
 risultato 0
 BYte vale 0
 Byte has to be swapped with 1
-Replacing byte <<a4>> 1
-ciao 1 ac
+Replacing byte <<70>> 1
+ciao 1 78
 Processing pixel 5
-vale ac
-risultato 4
-BYte vale 1
-Byte has to be swapped with 0
-Replacing byte <<ac>> 1
-ciao 0 a8
+vale 78
+risultato 0
+BYte vale 0
+Byte has to be swapped with 1
+Replacing byte <<78>> 1
+ciao 1 7c
 Processing pixel 6
-vale a8
+vale 7c
 risultato 0
 BYte vale 0
 Byte has to be swapped with 1
-Replacing byte <<a8>> 1
-ciao 1 aa
+Replacing byte <<7c>> 1
+ciao 1 7e
 Processing pixel 7
-vale aa
+vale 7e
 risultato 0
 BYte vale 0
 Byte has to be swapped with 1
-Replacing byte <<aa>> 1
-ciao 1 ab
-1c1
-< U«
-\ Manca newline alla fine del file
----
-> U
-\ Manca newline alla fine del file
+Replacing byte <<7e>> 1
+ciao 1 7f
