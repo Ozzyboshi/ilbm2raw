@@ -59,3 +59,10 @@ REVISION
 /gmp*
 /isl*
 src/ilbm2raw
+
+Makefile
+Makefile.in
+aclocal.m4
+configure
+src/Makefile
+src/Makefile.in
