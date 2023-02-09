@@ -15,7 +15,7 @@ Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 Boston, MA 02111-1307, USA.
 
 /*
-The following code is based on a Magazine articicle from Sebastiano Vigna
+The following code is based on a Magazine article from Sebastiano Vigna
 You can read the whole article on Amiga Magazine number 11 (italian edition) in the "Transactor" section
 */
 
@@ -86,6 +86,7 @@ unsigned char getMask(int);
 int VERBOSE = 0;
 int ACE = 0;
 int INTERLEAVED = 0;
+int FORCE = 0;
 
 int main(int argc, char **argv)
 {
@@ -109,12 +110,15 @@ int main(int argc, char **argv)
 	int swapPaletteY[100];
 	regmatch_t matches[3];
 
-	while ((opt = getopt(argc, argv, ":hvp:aiVs:")) != -1)
+	while ((opt = getopt(argc, argv, ":hvp:aiVs:f")) != -1)
 	{
 		switch (opt)
 		{
 		case 'a':
 			ACE = 1;
+			break;
+		case 'f':
+			FORCE = 1;
 			break;
 		case 'i':
 			INTERLEAVED = 1;
@@ -347,10 +351,14 @@ int main(int argc, char **argv)
 				}
 
 				// Decompress until we decoded BitMapHeader.h lines
-				out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				if (FORCE)
+					out = open(outputFileName, O_TRUNC | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				else
+					out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				
 				if (out < 0)
 				{
-					perror("Cant write output file");
+					perror("Cant write output raw file");
 					exit(1);
 				}
 
@@ -424,7 +432,9 @@ int main(int argc, char **argv)
 
 				if (VERBOSE)
 					printf("Writing to %s\n", outputFileName);
-				out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+
+				if (FORCE) out = open(outputFileName, O_TRUNC | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				else out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 				if (out < 0)
 				{
 					perror("Cant write to output file");
@@ -939,6 +949,7 @@ void printusage()
 	printf("Usage: %s inputIFFFile outputRAWFile [OPTIONS]\n", PACKAGE);
 	printf("OPTIONS:\n");
 	printf("	-a		   : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)\n");
+	printf("	-f 		   : Overwrite outputRAWFile if already created");
 	printf("	-p outfile 	   : Write resulting palette into outfile\n");
 	printf("	-i 		   : Output in interleaved mode (raw mode default)\n");
 	printf("	-s X,Y		   : Swap image color and palette X with image color and palette of Y\n");
