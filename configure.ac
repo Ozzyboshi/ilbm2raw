@@ -1,4 +1,4 @@
-AC_INIT([ilbm2raw],[0.3])
+AC_INIT([ilbm2raw],[0.4])
 AM_INIT_AUTOMAKE([silent-rules])
 AC_CONFIG_SRCDIR([src/ilbm2raw.c])
 AC_PROG_CC([gcc])
