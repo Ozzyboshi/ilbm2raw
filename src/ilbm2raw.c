@@ -87,6 +87,7 @@ int VERBOSE = 0;
 int ACE = 0;
 int INTERLEAVED = 0;
 int FORCE = 0;
+int REMOVEBITPLANEFILES = 1;
 
 int main(int argc, char **argv)
 {
@@ -110,12 +111,15 @@ int main(int argc, char **argv)
 	int swapPaletteY[100];
 	regmatch_t matches[3];
 
-	while ((opt = getopt(argc, argv, ":hvp:aiVs:f")) != -1)
+	while ((opt = getopt(argc, argv, ":hvp:aiVs:fb")) != -1)
 	{
 		switch (opt)
 		{
 		case 'a':
 			ACE = 1;
+			break;
+		case 'b':
+			REMOVEBITPLANEFILES = 0;
 			break;
 		case 'f':
 			FORCE = 1;
@@ -477,7 +481,7 @@ int main(int argc, char **argv)
 					if (VERBOSE)
 						printf("Cmd: %s\n", cmd);
 
-					for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
+					for (zCont = 0; REMOVEBITPLANEFILES && zCont < BitMapHeader.nPlanes; zCont++)
 					{
 						snprintf(cmd, sizeof(cmd), "rm %s.%d", outputFileName, zCont);
 						if (VERBOSE)
@@ -664,7 +668,7 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	if (VERBOSE)
 		printf("Cmd: %s\n", cmd);
 
-	for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
+	for (zCont = 0; REMOVEBITPLANEFILES && zCont < BitMapHeader.nPlanes; zCont++)
 	{
 		snprintf(cmd, sizeof(cmd), "rm %s.%d", fileName, zCont);
 		if (VERBOSE)
@@ -949,7 +953,8 @@ void printusage()
 	printf("Usage: %s inputIFFFile outputRAWFile [OPTIONS]\n", PACKAGE);
 	printf("OPTIONS:\n");
 	printf("	-a		   : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)\n");
-	printf("	-f 		   : Overwrite outputRAWFile if already created");
+	printf("    -b         : Produce also bitplane files\n");
+	printf("	-f 		   : Overwrite outputRAWFile if already created\n");
 	printf("	-p outfile 	   : Write resulting palette into outfile\n");
 	printf("	-i 		   : Output in interleaved mode (raw mode default)\n");
 	printf("	-s X,Y		   : Swap image color and palette X with image color and palette of Y\n");
