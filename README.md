@@ -21,12 +21,12 @@ To quickly detect regression, ilbm2raw has some mechanism to detect if images ar
 To achieve this a set of iff files in different formats have been stored inside imgtest directory and, the same files, converted in raw format, have been stored in imgout directory.
 After each code update, before merging, it's safe to run
 ```
-make cheks
+make checks
 ```
 this will convert the images inside imgtest with the new updated code, the result will be compared against the imgout contents, if there are any differences, review the code because something is wrong!
 Expected output should be something like this:
  ```
- PASS: greptest.sh
+PASS: greptest.sh
 PASS: acenoninterleavedtest.sh
 PASS: rawnoninterleavedtest1.sh
 PASS: rawnoninterleavedtest2.sh
