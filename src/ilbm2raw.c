@@ -953,7 +953,7 @@ void printusage()
 	printf("Usage: %s inputIFFFile outputRAWFile [OPTIONS]\n", PACKAGE);
 	printf("OPTIONS:\n");
 	printf("	-a		   : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)\n");
-	printf("    -b         : Produce also bitplane files\n");
+	printf("	-b         : Produce also bitplane files\n");
 	printf("	-f 		   : Overwrite outputRAWFile if already created\n");
 	printf("	-p outfile 	   : Write resulting palette into outfile\n");
 	printf("	-i 		   : Output in interleaved mode (raw mode default)\n");
