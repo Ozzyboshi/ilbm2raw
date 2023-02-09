@@ -16,6 +16,35 @@ In order to compile and install ilbm2raw you will need a regular gcc, the whole 
 
 and you are done.
 
+### Unit testing
+To quickly detect regression, ilbm2raw has some mechanism to detect if images are still correctly converted after each update.
+To achieve this a set of iff files in different formats have been stored inside imgtest directory and, the same files, converted in raw format, have been stored in imgout directory.
+After each code update, before merging, it's safe to run
+```
+make cheks
+```
+this will convert the images inside imgtest with the new updated code, the result will be compared against the imgout contents, if there are any differences, review the code because something is wrong!
+Expected output should be something like this:
+ ```
+ PASS: greptest.sh
+PASS: acenoninterleavedtest.sh
+PASS: rawnoninterleavedtest1.sh
+PASS: rawnoninterleavedtest2.sh
+PASS: rawinterleavedonelineswaptest.sh
+PASS: stripestest.sh
+============================================================================
+Testsuite summary for ilbm2raw 0.3
+============================================================================
+# TOTAL: 6
+# PASS:  6
+# SKIP:  0
+# XFAIL: 0
+# FAIL:  0
+# XPASS: 0
+# ERROR: 0
+============================================================================
+ ```
+
 ### Usage
 
 Typing ilbm2raw -h will display a little help screen that is quite self-explanatory
