@@ -356,9 +356,14 @@ int main(int argc, char **argv)
 
 				// Decompress until we decoded BitMapHeader.h lines
 				if (FORCE)
-					out = open(outputFileName, O_TRUNC | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-				else
-					out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				{
+					if (unlink(outputFileName))
+					{
+						perror("Cant write output raw file");
+						exit(1);
+					}
+				}
+				out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 				
 				if (out < 0)
 				{
@@ -437,8 +442,15 @@ int main(int argc, char **argv)
 				if (VERBOSE)
 					printf("Writing to %s\n", outputFileName);
 
-				if (FORCE) out = open(outputFileName, O_TRUNC | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-				else out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+				if (FORCE)
+				{
+					if (unlink(outputFileName))
+					{
+						perror("Cant write output raw file");
+						exit(1);
+					}
+				}
+				out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 				if (out < 0)
 				{
 					perror("Cant write to output file");
