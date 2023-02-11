@@ -26,6 +26,7 @@ You can read the whole article on Amiga Magazine number 11 (italian edition) in 
 #include <fcntl.h>
 #include <unistd.h>
 #include <regex.h>
+#include <sys/stat.h>
 
 typedef int8_t BYTE;
 typedef uint8_t UBYTE;
@@ -110,6 +111,7 @@ int main(int argc, char **argv)
 	int swapPaletteX[100];
 	int swapPaletteY[100];
 	regmatch_t matches[3];
+	struct stat statbuf;
 
 	while ((opt = getopt(argc, argv, ":hvp:aiVs:fb")) != -1)
 	{
@@ -329,7 +331,7 @@ int main(int argc, char **argv)
 			if (BitMapHeader.compression == cmpByteRun1)
 			{
 				if (VERBOSE)
-					printf("Bitmap commpression is Byterun1\n");
+					printf("Bitmap compression is Byterun1\n");
 
 				// Ace file header creation
 				if (ACE)
@@ -357,14 +359,14 @@ int main(int argc, char **argv)
 				// Decompress until we decoded BitMapHeader.h lines
 				if (FORCE)
 				{
-					if (unlink(outputFileName))
+					if (!stat(outputFileName,&statbuf) && unlink(outputFileName))
 					{
 						perror("Cant write output raw file");
 						exit(1);
 					}
 				}
+				if (VERBOSE) printf("Writing raw data to %s\n",outputFileName);
 				out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-				
 				if (out < 0)
 				{
 					perror("Cant write output raw file");
@@ -380,14 +382,14 @@ int main(int argc, char **argv)
 					for (yCounter = 0; yCounter < BitMapHeader.h; yCounter++)
 					{
 						UBYTE *decompressedData = byterun1decompress((UBYTE *)p + bytesReadTotal, RowBytes(BitMapHeader.w), &bytesRead);
-						if (VERBOSE)
+						/*if (VERBOSE)
 						{
 							int i = 0;
 							for (i = 0; i < 40; i++)
 							{
 								printf("%hhx ", decompressedData[i]);
 							}
-						}
+						}*/
 						write(out, decompressedData, RowBytes(BitMapHeader.w));
 						free(decompressedData);
 						bytesReadTotal += bytesRead;
@@ -611,7 +613,7 @@ UBYTE *byterun1decompress(UBYTE *data, unsigned int rowSize, unsigned int *bytes
 		// -128 NOP
 		else if (curByte == minus128)
 		{
-			printf("trovato NOP");
+			//printf("NOP found!\n");
 			dataPtr++;
 		}
 		// -1..-127 => replicate next byte -n+1 times
@@ -647,6 +649,22 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	unsigned long int byteCounter;
 	char cmd[1000];
 	size_t len = 0;
+	struct stat statbuf;
+
+	for (zCont = 0; FORCE && zCont < BitMapHeader.nPlanes; zCont++)
+	{
+		snprintf(cmd,sizeof(cmd),"%s.%d",fileName,zCont);
+		printf("statto %s\n",cmd);
+		if (!stat(cmd,&statbuf))
+		{
+			printf("unlink %s\n",cmd);
+			if (unlink(cmd))
+			{
+				perror("Error unlinking");
+				exit(0);
+			}
+		}
+	}
 
 	for (byteCounter = 0, yCont = 0; yCont < BitMapHeader.h; yCont++)
 	{
