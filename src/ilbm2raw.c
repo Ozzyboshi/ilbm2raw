@@ -267,6 +267,15 @@ int main(int argc, char **argv)
 
 			if (paletteFileName)
 			{
+				if (FORCE)
+				{
+					if (!stat(paletteFileName,&statbuf) && unlink(paletteFileName))
+					{
+						perror("Cant write output raw file");
+						exit(1);
+					}
+				}
+
 				out = open(paletteFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 				if (out < 0)
 				{
@@ -446,7 +455,7 @@ int main(int argc, char **argv)
 
 				if (FORCE)
 				{
-					if (unlink(outputFileName))
+					if (!stat(outputFileName,&statbuf) && unlink(outputFileName))
 					{
 						perror("Cant write output raw file");
 						exit(1);
