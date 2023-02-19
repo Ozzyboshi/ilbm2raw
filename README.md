@@ -54,7 +54,7 @@ Typing ilbm2raw -h will display a little help screen that is quite self-explanat
   OPTIONS:
         -a                 : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)
         -b                 : Produce also bitplane files
-        -f                 : Overwrite outputRAWFile if already created
+        -f                 : Overwrite outputRAWFile (and palette outout file if -p is given) if already created
         -p outfile         : Write resulting palette into outfile
         -i                 : Output in interleaved mode (raw mode default)
         -s X,Y             : Swap image color and palette X with image color and palette of Y
