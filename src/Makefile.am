@@ -4,7 +4,7 @@ ilbm2raw_SOURCES = ilbm2raw.c
 AM_CFLAGS = -Wno-unused-result
 
 # Unit testing
-check_SCRIPTS = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh
+check_SCRIPTS = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh
 TESTS = $(check_SCRIPTS)
 
 greptest.sh:
@@ -31,4 +31,8 @@ stripestest.sh:
 	echo 'rm -rf stripestest && mkdir stripestest && ./ilbm2raw ../imgtest/stripes.iff ./stripestest/stripes.raw && diff ./stripestest/stripes.raw ../imgout/stripes.raw && rm -rf ./stripestest' > stripestest.sh
 	chmod +x stripestest.sh
 
-CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh
+spacestest.sh:
+	echo 'rm -rf spacestest && mkdir spacestest && ./ilbm2raw ../imgtest/Sfondo\ Titolo\ Chiaro.iff ./spacestest/Sfondo\ Titolo\ Chiaro.raw && diff ./spacestest/Sfondo\ Titolo\ Chiaro.raw ../imgout/Sfondo\ Titolo\ Chiaro.raw && rm -rf ./spacestest' > spacestest.sh
+	chmod +x stripestest.sh
+
+CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh

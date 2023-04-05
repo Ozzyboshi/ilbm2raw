@@ -663,10 +663,8 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	for (zCont = 0; FORCE && zCont < BitMapHeader.nPlanes; zCont++)
 	{
 		snprintf(cmd,sizeof(cmd),"%s.%d",fileName,zCont);
-		printf("statto %s\n",cmd);
 		if (!stat(cmd,&statbuf))
 		{
-			printf("unlink %s\n",cmd);
 			if (unlink(cmd))
 			{
 				perror("Error unlinking");
@@ -679,7 +677,7 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	{
 		for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 		{
-			snprintf(cmd, sizeof(cmd), "dd  if=%s of=%s.%d bs=%d count=1 skip=%ld oflag=append conv=notrunc", fileName, fileName, zCont, BitMapHeader.w / 8, byteCounter);
+			snprintf(cmd, sizeof(cmd), "dd  if='%s' of='%s.%d' bs=%d count=1 skip=%ld oflag=append conv=notrunc", fileName, fileName, zCont, BitMapHeader.w / 8, byteCounter);
 			if (!VERBOSE)
 				strcat(cmd, " 2>/tmp/null");
 			if (VERBOSE)
@@ -699,17 +697,17 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	len = strlen(cmd);
 	for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 	{
-		snprintf(cmd + len, sizeof(cmd) - len, " %s.%d", fileName, zCont);
+		snprintf(cmd + len, sizeof(cmd) - len, " '%s.%d'", fileName, zCont);
 		len = strlen(cmd);
 	}
-	snprintf(cmd + len, sizeof(cmd) - len, " > %s", fileName);
+	snprintf(cmd + len, sizeof(cmd) - len, " > '%s'", fileName);
 	system(cmd);
 	if (VERBOSE)
 		printf("Cmd: %s\n", cmd);
 
 	for (zCont = 0; REMOVEBITPLANEFILES && zCont < BitMapHeader.nPlanes; zCont++)
 	{
-		snprintf(cmd, sizeof(cmd), "rm %s.%d", fileName, zCont);
+		snprintf(cmd, sizeof(cmd), "rm '%s.%d'", fileName, zCont);
 		if (VERBOSE)
 			printf("%s\n", cmd);
 		system(cmd);
