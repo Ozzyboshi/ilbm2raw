@@ -69,6 +69,7 @@ BMapHeader BitMapHeader;
 void printusage();
 void printversion();
 void print_bytes(void *ptr, int size);
+void produce_mask(UBYTE nPlanes,const char* outputFileName);
 
 #define UGetByte() (*source++)
 #define UPutByte(c) (*dest++ = (c))
@@ -89,6 +90,8 @@ int ACE = 0;
 int INTERLEAVED = 0;
 int FORCE = 0;
 int REMOVEBITPLANEFILES = 1;
+const char* MASKFILE = NULL;
+const char* REVERSEMASKFILE = NULL;
 
 int main(int argc, char **argv)
 {
@@ -113,7 +116,7 @@ int main(int argc, char **argv)
 	regmatch_t matches[3];
 	struct stat statbuf;
 
-	while ((opt = getopt(argc, argv, ":hvp:aiVs:fb")) != -1)
+	while ((opt = getopt(argc, argv, ":hvp:aiVs:fbm:r:")) != -1)
 	{
 		switch (opt)
 		{
@@ -131,6 +134,12 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			printusage();
+		case 'm':
+			MASKFILE = optarg;
+			break;
+		case 'r':
+			REVERSEMASKFILE = optarg;
+			break;
 		case 'v':
 			VERBOSE = 1;
 			break;
@@ -198,6 +207,10 @@ int main(int argc, char **argv)
 		printf("Ace mode enabled\n");
 	if (VERBOSE && INTERLEAVED)
 		printf("Interleaved mode enabled\n");
+	if (VERBOSE && MASKFILE)
+		printf("Mask output file is : %s\n",MASKFILE);
+	if (VERBOSE && REVERSEMASKFILE)
+		printf("Mask reverse output file is : %s\n",REVERSEMASKFILE);
 
 	if (inputFile == NULL || !strlen(inputFile))
 		printusage();
@@ -504,6 +517,11 @@ int main(int argc, char **argv)
 					if (VERBOSE)
 						printf("Cmd: %s\n", cmd);
 
+					if (MASKFILE || REVERSEMASKFILE)
+					{
+						produce_mask(BitMapHeader.nPlanes,outputFileName);
+					}
+
 					for (zCont = 0; REMOVEBITPLANEFILES && zCont < BitMapHeader.nPlanes; zCont++)
 					{
 						snprintf(cmd, sizeof(cmd), "rm %s.%d", outputFileName, zCont);
@@ -705,6 +723,11 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	if (VERBOSE)
 		printf("Cmd: %s\n", cmd);
 
+	if (MASKFILE || REVERSEMASKFILE)
+	{
+		produce_mask(BitMapHeader.nPlanes,fileName);
+	}
+
 	for (zCont = 0; REMOVEBITPLANEFILES && zCont < BitMapHeader.nPlanes; zCont++)
 	{
 		snprintf(cmd, sizeof(cmd), "rm '%s.%d'", fileName, zCont);
@@ -719,7 +742,7 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 	}
 }
 
-/* This function reads a raw file, trys to find bitplane sections according to a bitmapheader data struct and
+/* This function reads a raw file, tris to find bitplane sections according to a bitmapheader data struct and
 tries to swap colors according to swapPaletteX and swapPaletteY */
 void swapPaletteColors(const char *outputFileName, BMapHeader BitMapHeader, int *swapPaletteX, int *swapPaletteY, int swapPaletteCounter)
 {
@@ -990,10 +1013,12 @@ void printusage()
 	printf("Usage: %s inputIFFFile outputRAWFile [OPTIONS]\n", PACKAGE);
 	printf("OPTIONS:\n");
 	printf("	-a		   : Resulting file will be created according to ACE (Amiga C Engine) specifications (https://github.com/AmigaPorts/ACE)\n");
-	printf("	-b         : Produce also bitplane files\n");
+	printf("	-b		   : Produce also bitplane files\n");
 	printf("	-f 		   : Overwrite outputRAWFile if already created\n");
 	printf("	-p outfile 	   : Write resulting palette into outfile\n");
 	printf("	-i 		   : Output in interleaved mode (raw mode default)\n");
+	printf("	-m outfile	   : Write resulting mask image into outfile\n");
+	printf("	-r outfile	   : Write resulting reversed mask image into outfile\n");
 	printf("	-s X,Y		   : Swap image color and palette X with image color and palette of Y\n");
 	printf("	-v		   : Be verbose\n");
 	printf("	-V		   : Print version info\n");
@@ -1003,4 +1028,104 @@ void printversion()
 {
 	printf("%s version '%s'\n", PACKAGE, VERSION);
 	exit(0);
+}
+
+void produce_mask(UBYTE nPlanes,const char* outputFileName)
+{
+	long int h,h2,out;
+	char cmd[1000];
+	UBYTE t;
+	UBYTE t2,t3;
+	UBYTE cont;
+	ULONG byteCont = 0;
+	struct stat statbuf;
+
+	if (nPlanes == 0) return ;
+
+	if (MASKFILE)
+	{
+		if (FORCE && !stat(MASKFILE,&statbuf) && unlink(MASKFILE))
+		{
+			perror("Cant delete output mask file");
+			exit(1);
+		}
+		out = open(MASKFILE, O_CREAT | O_WRONLY | O_EXCL , S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+		if (out < 0)
+		{
+			perror("Cant open for writing output mask file");
+			exit(1);
+		}
+		if (VERBOSE) printf("Mask file %s created!\n",MASKFILE);
+		close(out);
+	}
+	if (REVERSEMASKFILE)
+	{
+		if (FORCE && !stat(REVERSEMASKFILE,&statbuf) && unlink(REVERSEMASKFILE))
+		{
+			perror("Cant delete output mask reversed file");
+			exit(1);
+		}
+		out = open(REVERSEMASKFILE, O_CREAT | O_WRONLY | O_EXCL , S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+		if (out < 0)
+		{
+			perror("Cant open for writing output reverse mask file");
+			exit(1);
+		}
+		if (VERBOSE) printf("Mask reverse file %s created!\n",MASKFILE);
+		close(out);
+	}
+
+	snprintf(cmd, sizeof(cmd), "%s.%d", outputFileName, 0);
+	h = open(cmd, O_RDONLY);
+	if (h < 0)
+	{
+		perror("Raw file 0 not found");
+		exit(1);
+	}
+	while (read(h, (void *)&t, 1) == 1)
+	{
+		for (cont = 1;cont < nPlanes; cont++)
+		{
+			snprintf(cmd, sizeof(cmd), "%s.%d", outputFileName, cont);
+			h2 = open(cmd, O_RDONLY);
+			if (h2 < 0)
+			{
+				perror("Raw file not found");
+				exit(1);
+			}
+			lseek(h2,byteCont,SEEK_SET);
+			(void)read(h2, (void *)&t2, 1);
+			t = t | t2;
+			close(h2);
+		}
+
+		if (MASKFILE)
+		{
+			out = open(MASKFILE, O_WRONLY | O_EXCL | O_APPEND, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+			if (out < 0)
+			{
+				perror("Cant open for writing output mask file");
+				printf("File is %s\n",MASKFILE);
+				exit(1);
+			}
+			write(out,&t,1);
+			close(out);
+		}
+		if (REVERSEMASKFILE)
+		{
+			out = open(REVERSEMASKFILE, O_WRONLY | O_EXCL | O_APPEND , S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH );
+			if (out < 0)
+			{
+				perror("Cant open for writing output reverse mask file");
+				exit(1);
+			}
+			t3 = ~ t;
+			write(out,&t3,1);
+			close(out);
+		}
+		byteCont++;
+	}
+
+	close(h);
+	return;
 }

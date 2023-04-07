@@ -33,6 +33,10 @@ stripestest.sh:
 
 spacestest.sh:
 	echo 'rm -rf spacestest && mkdir spacestest && ./ilbm2raw ../imgtest/Sfondo\ Titolo\ Chiaro.iff ./spacestest/Sfondo\ Titolo\ Chiaro.raw && diff ./spacestest/Sfondo\ Titolo\ Chiaro.raw ../imgout/Sfondo\ Titolo\ Chiaro.raw && rm -rf ./spacestest' > spacestest.sh
-	chmod +x stripestest.sh
+	chmod +x spacestest.sh
 
-CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh
+maskstest.sh:
+	echo 'rm -rf maskstest && mkdir maskstest && ./ilbm2raw ../imgtest/e.iff ./maskstest/e.raw -m ./maskstest/e.mask -r ./maskstest/e.maskreverse && diff ./maskstest/e.raw ../imgout/e.raw && diff ./maskstest/e.mask ../imgout/e.mask && diff ./maskstest/e.maskreverse ../imgout/e.maskreverse && rm -rf ./maskstest' > maskstest.sh
+	chmod +x maskstest.sh
+
+CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh maskstest.sh
