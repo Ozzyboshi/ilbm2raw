@@ -4,7 +4,7 @@ ilbm2raw_SOURCES = ilbm2raw.c
 AM_CFLAGS = -Wno-unused-result
 
 # Unit testing
-check_SCRIPTS = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh
+check_SCRIPTS = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh bpltest.sh
 TESTS = $(check_SCRIPTS)
 
 greptest.sh:
@@ -39,4 +39,8 @@ maskstest.sh:
 	echo 'rm -rf maskstest && mkdir maskstest && ./ilbm2raw ../imgtest/e.iff ./maskstest/e.raw -m ./maskstest/e.mask -r ./maskstest/e.maskreverse && diff ./maskstest/e.raw ../imgout/e.raw && diff ./maskstest/e.mask ../imgout/e.mask && diff ./maskstest/e.maskreverse ../imgout/e.maskreverse && rm -rf ./maskstest' > maskstest.sh
 	chmod +x maskstest.sh
 
-CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh maskstest.sh
+bpltest.sh:
+	echo 'rm -rf bpltest && mkdir bpltest && ./ilbm2raw -f -b ../imgtest/rcfloppy.iff ./bpltest/rcfloppy.raw && diff ./bpltest/rcfloppy.raw ../imgout/rcfloppy.raw && diff ./bpltest/rcfloppy.raw.0 ../imgout/rcfloppy.raw.0 && diff ./bpltest/rcfloppy.raw.1 ../imgout/rcfloppy.raw.1 && diff ./bpltest/rcfloppy.raw.2 ../imgout/rcfloppy.raw.2 && rm -rf ./bpltest' > bpltest.sh
+	chmod +x bpltest.sh
+
+CLEANFILES = greptest.sh acenoninterleavedtest.sh rawnoninterleavedtest1.sh rawnoninterleavedtest2.sh rawinterleavedonelineswaptest.sh stripestest.sh spacestest.sh maskstest.sh spacestest.sh bpltest.sh

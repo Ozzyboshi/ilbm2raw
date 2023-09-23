@@ -473,6 +473,17 @@ int main(int argc, char **argv)
 						perror("Cant write output raw file");
 						exit(1);
 					}
+					for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
+					{
+						snprintf(cmd, sizeof(cmd), "%s.%d", outputFileName, zCont);
+						if (VERBOSE) printf("Removing file %s\n",cmd);
+						if (!stat(cmd,&statbuf) && unlink(cmd))
+						{
+							perror("Cant write output raw file");
+							exit(1);
+						}
+					}
+					
 				}
 				out = open(outputFileName, O_CREAT | O_WRONLY | O_EXCL, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 				if (out < 0)
@@ -490,7 +501,7 @@ int main(int argc, char **argv)
 						for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 						{
 							snprintf(cmd, sizeof(cmd), "dd if=%s of=%s.%d bs=%d count=1 skip=%ld oflag=append conv=notrunc", outputFileName, outputFileName, zCont, BitMapHeader.w / 8, byteCounter);
-							if (!VERBOSE)
+							//if (!VERBOSE)
 								strcat(cmd, " 2>/dev/null");
 							if (VERBOSE)
 								printf("%s\n", cmd);
@@ -696,10 +707,10 @@ void convertToNonInterleaved(const char *fileName, const char *aceFileHeader)
 		for (zCont = 0; zCont < BitMapHeader.nPlanes; zCont++)
 		{
 			snprintf(cmd, sizeof(cmd), "dd  if='%s' of='%s.%d' bs=%d count=1 skip=%ld oflag=append conv=notrunc", fileName, fileName, zCont, BitMapHeader.w / 8, byteCounter);
-			if (!VERBOSE)
+			//if (!VERBOSE)
 				strcat(cmd, " 2>/tmp/null");
-			if (VERBOSE)
-				printf("%s\n", cmd);
+			/*if (VERBOSE)
+				printf("%s\n", cmd);*/
 			if (WEXITSTATUS(system(cmd)))
 			{
 				printf("Error calculating bitplane\n");

@@ -1,0 +1,1 @@
+rm -rf bpltest && mkdir bpltest && ./ilbm2raw -f -b ../imgtest/rcfloppy.iff ./bpltest/rcfloppy.raw && diff ./bpltest/rcfloppy.raw ../imgout/rcfloppy.raw && diff ./bpltest/rcfloppy.raw.0 ../imgout/rcfloppy.raw.0 && diff ./bpltest/rcfloppy.raw.1 ../imgout/rcfloppy.raw.1 && diff ./bpltest/rcfloppy.raw.2 ../imgout/rcfloppy.raw.2 && rm -rf ./bpltest
